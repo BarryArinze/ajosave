@@ -82,17 +82,25 @@ export async function adminSoftDeleteUser(userId: string): Promise<void> {
  * List all users for admin panel.
  */
 export async function adminListUsers(search?: string): Promise<{ id: string; displayName: string; phone: string; email: string | null; role: string; reputationScore: number; createdAt: Date; deletedAt: Date | null }[]> {
-  const params: string[] = [];
-  let where = "WHERE deleted_at IS NULL";
   if (search) {
-    params.push(`%${search}%`);
-    where += ` AND (display_name ILIKE $1 OR phone ILIKE $1 OR email ILIKE $1)`;
+    const { rows } = await query(
+      `SELECT id, display_name as "displayName", phone, email, role,
+              reputation_score as "reputationScore", created_at as "createdAt", deleted_at as "deletedAt"
+       FROM users
+       WHERE deleted_at IS NULL
+         AND (display_name ILIKE $1 OR phone ILIKE $1 OR email ILIKE $1)
+       ORDER BY created_at DESC LIMIT 200`,
+      [`%${search}%`]
+    );
+    return rows;
   }
+
   const { rows } = await query(
     `SELECT id, display_name as "displayName", phone, email, role,
             reputation_score as "reputationScore", created_at as "createdAt", deleted_at as "deletedAt"
-     FROM users ${where} ORDER BY created_at DESC LIMIT 200`,
-    params
+     FROM users
+     WHERE deleted_at IS NULL
+     ORDER BY created_at DESC LIMIT 200`
   );
   return rows;
 }
