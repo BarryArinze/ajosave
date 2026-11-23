@@ -24,6 +24,10 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
+  // Prevents the browser from resolving DNS for links before the user
+  // clicks them.  Reduces latency leakage and is required for A+ on
+  // securityheaders.com when combined with the other headers.
+  { key: "X-DNS-Prefetch-Control", value: "off" },
 ];
 
 const nextConfig = {
