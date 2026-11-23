@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 
-// Security headers applied to every response (issue #294).
+// Static security headers applied to every response (issue #294).
+//
+// Content-Security-Policy is intentionally absent here: it requires a
+// per-request nonce to block 'unsafe-inline', so it is generated dynamically
+// in src/middleware.ts (issue #182).
+//
 // HSTS is browser-enforced once a user visits over HTTPS: the browser
 // remembers for 2 years (63072000s), applies to the whole domain
 // (includeSubDomains), and qualifies for browser preload lists.
