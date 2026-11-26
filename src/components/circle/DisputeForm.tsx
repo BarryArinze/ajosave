@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useCircleInvalidation } from "@/lib/queryInvalidation";
 import styles from "./DisputeForm.module.css";
 
 interface DisputeFormProps {
@@ -15,6 +16,7 @@ interface DisputeFormProps {
 
 export function DisputeForm({ circleId, contributionId, memberId, onSuccess }: DisputeFormProps) {
   const router = useRouter();
+  const { invalidateCircle } = useCircleInvalidation();
   const [type, setType] = useState<"missed_payout" | "wrong_amount" | "other">("other");
   const [reason, setReason] = useState("");
   const [evidence, setEvidence] = useState("");
@@ -50,6 +52,7 @@ export function DisputeForm({ circleId, contributionId, memberId, onSuccess }: D
       setEvidence("");
       setPaystackRef("");
       onSuccess?.();
+      invalidateCircle(circleId);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
