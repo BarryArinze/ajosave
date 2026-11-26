@@ -1,18 +1,22 @@
-# Security Headers
+# Security Headers (Issues #182, #364)
 
-OWASP ZAP identified several HIGH/CRITICAL findings in the DAST scan.
-All findings have been remediated by adding HTTP security response headers.
+OWASP ZAP identified several HIGH/CRITICAL findings in the DAST scan (run 39555269339, issue #364).
+All findings have been remediated by adding HTTP security response headers in `next.config.mjs`.
 
 ## Header inventory
 
-| Header | Delivery | Value | Addresses |
-|---|---|---|---|
-| `Content-Security-Policy` | Middleware (dynamic, per-request nonce) | `strict-dynamic` + nonce; no `unsafe-inline`/`unsafe-eval`; `report-uri /api/csp-report` | XSS, data injection |
-| `Strict-Transport-Security` | `next.config.mjs` (static) | 2 years, includeSubDomains, preload | Protocol downgrade, cookie hijacking |
-| `X-Frame-Options` | `next.config.mjs` (static) | DENY | Clickjacking |
-| `X-Content-Type-Options` | `next.config.mjs` (static) | nosniff | MIME-sniffing |
-| `Referrer-Policy` | `next.config.mjs` (static) | strict-origin-when-cross-origin | Information leakage |
-| `Permissions-Policy` | `next.config.mjs` (static) | Disables camera, mic, geolocation | Privacy |
+| Header | Value | Addresses |
+|---|---|---|
+| `Content-Security-Policy` | Restricts resource origins, disables `object-src`, upgrades insecure requests | XSS, data injection |
+| `Strict-Transport-Security` | 2 years (63072000 s), includeSubDomains, preload | Protocol downgrade, cookie hijacking |
+| `X-Frame-Options` | DENY | Clickjacking |
+| `X-Content-Type-Options` | nosniff | MIME-sniffing |
+| `Referrer-Policy` | strict-origin-when-cross-origin | Information leakage |
+| `Permissions-Policy` | Disables camera, mic, geolocation, FLoC | Privacy |
+| `Cross-Origin-Embedder-Policy` | require-corp | Spectre/cross-origin attacks |
+| `Cross-Origin-Opener-Policy` | same-origin | Cross-origin window access |
+| `Cross-Origin-Resource-Policy` | same-origin | Cross-origin resource reads |
+| `X-Permitted-Cross-Domain-Policies` | none | Adobe Flash/PDF cross-domain |
 
 ## CSP implementation (issue #182)
 
