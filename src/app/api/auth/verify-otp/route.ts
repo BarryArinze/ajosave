@@ -5,8 +5,6 @@ import { getRedis } from "@/lib/redis";
 import { getLockoutStatus, recordFailure, resetLockout } from "@/lib/lockout";
 import { otpMatches } from "@/lib/otp-code";
 import { query } from "@/lib/db";
-import { hmacIndex, decrypt } from "@/lib/encryption";
-import { logAuditAction } from "@/server/services/audit.service";
 import { getClientIp } from "@/lib/otp-abuse";
 import type { ApiResponse } from "@/types";
 
@@ -117,8 +115,8 @@ export const POST = withErrorHandler(withSanitizedBody(async (req: NextRequest) 
     const storedOtp = await redis.get(`otp:${phone}`);
 
     if (!otpMatches(storedOtp, otp)) {
-      // Record failure and get updated status
-      const updatedStatus = await recordFailure(phone);
+      // Record failure and get updated status (pass IP for audit log)
+      const updatedStatus = await recordFailure(phone, { ipAddress: getClientIp(req.headers) });
 
       // If newly locked, return 423; otherwise 401
       const statusCode = updatedStatus.isLocked ? 423 : 401;
