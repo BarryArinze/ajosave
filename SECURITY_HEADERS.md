@@ -1,15 +1,14 @@
-# Security Headers (Issue #182)
+# Security Headers (Issues #182, #364)
 
-OWASP ZAP identified several HIGH/CRITICAL findings in the DAST scan.
-All findings have been remediated by adding HTTP security response headers
-in `next.config.mjs`.
+OWASP ZAP identified several HIGH/CRITICAL findings in the DAST scan (run 39555269339, issue #364).
+All findings have been remediated by adding HTTP security response headers in `next.config.mjs`.
 
 ## Headers Added
 
 | Header | Value | Addresses |
 |---|---|---|
 | `Content-Security-Policy` | Restricts resource origins, disables `object-src`, upgrades insecure requests | XSS, data injection |
-| `Strict-Transport-Security` | 1 year, includeSubDomains, preload | Protocol downgrade, cookie hijacking |
+| `Strict-Transport-Security` | 2 years (63072000 s), includeSubDomains, preload | Protocol downgrade, cookie hijacking |
 | `X-Frame-Options` | DENY | Clickjacking |
 | `X-Content-Type-Options` | nosniff | MIME-sniffing |
 | `Referrer-Policy` | strict-origin-when-cross-origin | Information leakage |
