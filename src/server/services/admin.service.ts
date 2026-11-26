@@ -106,8 +106,9 @@ export async function adminListUsers(search?: string): Promise<{ id: string; dis
   }>(
     `SELECT id, display_name as "displayName", phone, email, role,
             reputation_score as "reputationScore", created_at as "createdAt", deleted_at as "deletedAt"
-     FROM users ${where} ORDER BY created_at DESC LIMIT 200`,
-    params
+     FROM users
+     WHERE deleted_at IS NULL
+     ORDER BY created_at DESC LIMIT 200`
   );
   // Decrypt PII fields before returning to caller
   return rows.map((row) => ({
